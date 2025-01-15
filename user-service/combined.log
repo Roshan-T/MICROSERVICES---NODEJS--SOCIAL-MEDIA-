@@ -1,0 +1,2 @@
+{"level":"info","message":"User service running on :","service":"identity-service","timestamp":"2025-01-15T19:09:21.000Z"}
+{"level":"info","message":"Connected to mongodb","service":"identity-service","timestamp":"2025-01-15T19:09:21.870Z"}
