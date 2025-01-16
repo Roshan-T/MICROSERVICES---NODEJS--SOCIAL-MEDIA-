@@ -14,6 +14,8 @@ const PORT = process.env.PORT || 3000;
 const redisClient = new Redis(process.env.REDIS_URL);
 import logger from "../utils/logger.js";
 import errorHandler from "../middleware/errorHandler.js";
+import { validateLogin } from "../../user-service/utils/validation.js";
+import { validateToken } from "../middleware/authMiddleware.js";
 
 app.use(helmet());
 app.use(cors());
@@ -77,6 +79,24 @@ app.use(
       logger.info(
         `Response received from Identity service ${proxyRes.statusCode}`
       );
+      return proxyResData;
+    },
+  })
+);
+
+//setting proxy for post service
+app.use(
+  "/v1/posts",
+  validateToken,
+  proxy(process.env.POST_SERVICE, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = "application/json";
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+      return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, cb) => {
+      logger.info(`Response received from post service ${proxyRes.statusCode}`);
       return proxyResData;
     },
   })
