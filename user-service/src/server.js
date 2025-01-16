@@ -33,6 +33,7 @@ app.use(express.json());
 app.use((req, res, next) => {
   logger.info(`Recevied ${req.method} request to ${req.url}`);
   logger.info(`Request body , ${req.body}`);
+  next();
 });
 
 app.use((req, res, next) => {
@@ -64,9 +65,10 @@ const sensitiveEndpointsLimiter = rateLimit({
 app.use("/api/auth/register", sensitiveEndpointsLimiter);
 
 //Routes
-import routes from "../routes/userRoutes.js";
+import authRoutes from "../routes/userRoutes.js";
 import errorHandler from "../middleware/errorHandler.js";
-app.use("/api/auth", routes);
+
+app.use("/api/auth", authRoutes);
 
 //error handler
 app.use(errorHandler);
